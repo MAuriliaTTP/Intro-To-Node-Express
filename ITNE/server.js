@@ -21,12 +21,12 @@ app.get('/resources', (req, res) => {
 
 // Get a specific resource by ID
 app.get('/resources/:id', (req, res) => {
-  const id = parseInt(req.params.id);
+  const id = parseInt(req.params.id, 10);
   const resource = resources.find(resource => resource.id === id);
   if (!resource) {
     res.status(404).json({ error: 'Resource not found' });
   } else {
-    res.json(resource);
+    res.send(resource);
   }
 });
 
@@ -39,6 +39,7 @@ app.post('/resources', (req, res) => {
     const newResource = { id, name };
     resources.push(newResource);
     res.status(201).json(newResource);
+    res.send(newResource);
   }
 });
 
@@ -77,3 +78,12 @@ app.use((req, res) => {
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
 });
+
+app.use((req, res, next) => {
+  console.log(`Request: ${req.method} ${req.originalUrl}`);
+  next();
+});
+// add this line
+app.use(express.json()) // this allows us to send JSON formatted bodies in our requests
+// ... route handlers
+// app.listen(...
